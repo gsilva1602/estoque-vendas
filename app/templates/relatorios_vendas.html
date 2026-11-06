@@ -1,11 +1,18 @@
 
 {% extends "base.html" %}
 
-{% block content %}
-<div class="container">
-    <h1>Relatório de vendas</h1>
-    <p>Consulte o faturamento e o desempenho das vendas por período.</p>
+{% block title %}Relatório de vendas · Estoque & Vendas{% endblock %}
 
+{% block content %}
+<div class="page-heading">
+    <div>
+        <h1>Relatório de vendas</h1>
+        <p class="muted">Consulte o faturamento e o desempenho das vendas por período.</p>
+    </div>
+</div>
+
+<section class="panel">
+    <h2>Filtros</h2>
     <form method="GET" class="filters-form">
         <div>
             <label for="data_inicial">Data inicial</label>
@@ -57,11 +64,12 @@
             </select>
         </div>
 
-        <button type="submit">Filtrar relatório</button>
-        <a href="{{ url_for('relatorios.vendas') }}" class="button-secondary">
+        <button class="button" type="submit">Filtrar relatório</button>
+        <a href="{{ url_for('relatorios.vendas') }}" class="button button-secondary">
             Limpar filtros
         </a>
     </form>
+</section>
 
     <section class="dashboard-cards">
         <div class="dashboard-card">
@@ -184,5 +192,4 @@
             </table>
         </div>
     </section>
-</div>
 {% endblock %}
