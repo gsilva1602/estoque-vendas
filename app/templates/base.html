@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Estoque & Vendas{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('dashboard.index') }}">Estoque & Vendas</a>
+  {% if current_user.is_authenticated %}
+  <nav>
+    {% if current_user.role == 'admin' %}
+      <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
+      <a href="{{ url_for('vendas.index') }}">Vendas</a>
+      <a href="{{ url_for('movimentacoes.index') }}">Movimentações</a>
+      <a href="{{ url_for('relatorios.vendas') }}">Relatório de vendas</a>
+      <a href="{{ url_for('usuarios.index') }}">Usuários</a>
+    {% elif current_user.role == 'vendedor' %}
+      <a href="{{ url_for('vendas.index') }}">Vendas</a>
+    {% elif current_user.role == 'estoquista' %}
+      <a href="{{ url_for('estoque.index') }}">Estoque</a>
+      <a href="{{ url_for('movimentacoes.index') }}">Movimentações</a>
+    {% endif %}
+  </nav>
+  <div class="user-menu"><span>{{ current_user.username }} · {{ current_user.role }}</span>
+    <form method="post" action="{{ url_for('auth.logout') }}"><button class="button button-light" type="submit">Sair</button></form>
+  </div>
+  {% endif %}
+</header>
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<div class="messages">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="site-footer">
+  <div class="site-footer-inner">Estoque &amp; Vendas</div>
+</footer>
+</body>
+</html>

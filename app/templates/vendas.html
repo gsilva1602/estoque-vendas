@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Vendas · Estoque & Vendas{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Vendas</h1><p class="muted">{% if can_sell %}Registre vendas dos produtos disponíveis em estoque.{% else %}Consulta de vendas registradas no sistema.{% endif %}</p></div></div>
+{% if can_sell %}<section class="panel"><h2>Registrar venda</h2>
+{% if products %}<form method="post" class="sale-form">
+<label>Produto<select name="product_id" required>{% for p in products %}<option value="{{ p.id }}">{{ p.name }} · {{ p.quantity }} disponível(is) · R$ {{ '%.2f'|format(p.unit_price|float) }}</option>{% endfor %}</select></label>
+<label>Quantidade<input type="number" name="quantity" min="1" step="1" required></label>
+<button class="button" type="submit">Finalizar venda</button>
+</form>{% else %}<p class="muted">Não há produtos disponíveis para venda. Procure o estoquista para registrar uma entrada.</p>{% endif %}
+</section>{% endif %}
+<section class="panel"><h2>{% if can_sell %}Minhas vendas{% else %}Vendas recentes{% endif %}</h2>
+{% if sale_rows %}<div class="table-wrap"><table><thead><tr><th>Data e horário</th><th>Produto</th><th>Quantidade</th><th>Valor unitário</th><th>Total</th><th>Vendedor</th><th>Situação</th><th></th></tr></thead><tbody>
+{% for row in sale_rows %}{% set s = row.record %}<tr><td>{{ s.created_at|localtime('%d/%m/%Y %H:%M:%S') }}</td><td>{{ s.product.name }}</td><td>{{ s.quantity }}</td><td>R$ {{ '%.2f'|format(s.unit_price|float) }}</td><td>R$ {{ '%.2f'|format(s.total|float) }}</td><td>{{ s.user.username }}</td><td><span class="stock-status {{ row.classe }}">{{ row.status }}</span>{% if row.note %}<br><span class="muted" style="white-space:normal;display:inline-block;max-width:260px;font-size:12px">{{ row.note }}</span>{% endif %}</td><td>{% if row.can_correct %}<a class="button button-secondary" href="{{ url_for('vendas.correct_sale_view', sale_id=s.id) }}">Corrigir ({{ row.minutes_left }} min)</a>{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">Nenhuma venda registrada.</p>{% endif %}
+</section>
+{% endblock %}

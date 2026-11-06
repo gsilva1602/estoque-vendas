@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Estoque & Vendas{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Dashboard</h1><p class="muted">Resumo de vendas e posição do estoque.</p></div></div>
+<div class="stats-grid">
+  <article class="stat"><span>Produtos cadastrados</span><strong>{{ product_count }}</strong></article>
+  <article class="stat"><span>Unidades em estoque</span><strong>{{ units_in_stock }}</strong></article>
+  <article class="stat"><span>Vendas registradas</span><strong>{{ sales_count }}</strong></article>
+  <article class="stat"><span>Valor total vendido</span><strong>R$ {{ '%.2f'|format(sales_total|float) }}</strong></article>
+</div>
+<div class="two-col">
+<section class="panel"><h2>Vendas recentes</h2>
+{% if recent_sales %}<div class="table-wrap"><table><thead><tr><th>Data</th><th>Produto</th><th>Qtd.</th><th>Total</th><th>Vendedor</th></tr></thead><tbody>
+{% for sale in recent_sales %}<tr><td>{{ sale.created_at|localtime('%d/%m/%Y %H:%M') }}</td><td>{{ sale.product.name }}</td><td>{{ sale.quantity }}</td><td>R$ {{ '%.2f'|format(sale.total|float) }}</td><td>{{ sale.user.username }}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">Nenhuma venda registrada ainda.</p>{% endif %}
+</section>
+<section class="panel">
+  <div class="section-heading">
+    <div>
+      <h2>Estoque atual</h2>
+      <p class="muted">
+        Produtos ordenados pela última entrada registrada.
+      </p>
+    </div>
+
+    <span class="stock-counter">
+      {{ low_stock_count }} produto(s) com estoque baixo
+    </span>
+  </div>
+
+  {% if stock_products %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th>Quantidade</th>
+            <th>Última entrada</th>
+            <th>Situação</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for product, last_entry in stock_products %}
+            <tr class="{% if product.quantity == 0 %}row-empty{% elif product.quantity <= 5 %}row-low{% endif %}">
+              <td>{{ product.id }}</td>
+              <td>{{ product.name }}</td>
+              <td>{{ product.category }}</td>
+              <td>{{ product.quantity }}</td>
+
+              <td>
+                {% if last_entry %}
+                  {{ last_entry|localtime('%d/%m/%Y %H:%M:%S') }}
+                {% else %}
+                  <span class="muted">
+                    Sem entradas registradas
+                  </span>
+                {% endif %}
+              </td>
+
+              <td>
+                {% if product.quantity == 0 %}
+                  <span class="stock-status status-empty">
+                    Sem estoque
+                  </span>
+                {% elif product.quantity <= 5 %}
+                  <span class="stock-status status-low">
+                    Estoque baixo
+                  </span>
+                {% else %}
+                  <span class="stock-status status-ok">
+                    Normal
+                  </span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="muted">Nenhum produto cadastrado.</p>
+  {% endif %}
+</section>
+{% endblock %}

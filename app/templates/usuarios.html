@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Usuários · Estoque & Vendas{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Usuários</h1><p class="muted">Crie contas e atribua o perfil correto.</p></div></div>
+<div class="two-col">
+<section class="panel"><h2>Novo usuário</h2>
+<form method="post" class="form-stack">
+<label>Nome de usuário<input name="username" maxlength="80" required></label>
+<label>Senha (mínimo 8 caracteres)<input type="password" name="password" minlength="8" required></label>
+<label>Perfil<select name="role" required><option value="vendedor">Vendedor</option><option value="estoquista">Estoquista</option><option value="admin">Administrador</option></select></label>
+<button class="button" type="submit">Criar usuário</button>
+</form></section>
+<section class="panel"><h2>Perfis</h2><ul class="role-list"><li><strong>Administrador</strong><span>Dashboard e gerenciamento de usuários.</span></li><li><strong>Vendedor</strong><span>Registrar vendas e consultar as próprias vendas.</span></li><li><strong>Estoquista</strong><span>Cadastrar produtos, registrar entradas e consultar o histórico.</span></li></ul></section>
+</div>
+<section class="panel"><h2>Usuários cadastrados</h2><div class="table-wrap"><table><thead><tr><th>Usuário</th><th>Perfil</th></tr></thead><tbody>{% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.role }}</td></tr>{% endfor %}</tbody></table></div></section>
+{% endblock %}

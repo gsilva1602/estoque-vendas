@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Estoque · Estoque & Vendas{% endblock %}
+{% block content %}
+<div class="page-heading"><div><h1>Estoque</h1><p class="muted">Cadastro de produtos, entradas e histórico.</p></div></div>
+<div class="two-col">
+<section class="panel"><h2>Cadastrar produto</h2>
+<form method="post" class="form-stack">
+<label>Nome do produto<input name="name" maxlength="120" required></label>
+<label>Categoria<input name="category" maxlength="80" required></label>
+<label>Preço unitário de venda (R$)<input name="unit_price" type="number" min="0" step="0.01" value="0.00" required></label>
+<button class="button" type="submit">Cadastrar produto</button>
+</form></section>
+<section class="panel"><h2>Registrar entrada</h2>
+{% if products %}<form method="post" action="{{ url_for('estoque.stock_entry') }}" class="form-stack">
+<label>Produto<select name="product_id" required>{% for product in products %}<option value="{{ product.id }}">{{ product.name }} · {{ product.quantity }} em estoque</option>{% endfor %}</select></label>
+<label>Quantidade recebida<input name="quantity" type="number" min="1" step="1" required></label>
+<button class="button" type="submit">Adicionar ao estoque</button>
+</form>{% else %}<p class="muted">Cadastre um produto antes de registrar uma entrada.</p>{% endif %}
+</section></div>
+<section class="panel"><h2>Produtos cadastrados</h2>
+{% if products %}<div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Categoria</th><th>Quantidade</th><th>Preço unitário</th></tr></thead><tbody>
+{% for p in products %}<tr><td>{{ p.id }}</td><td>{{ p.name }}</td><td>{{ p.category }}</td><td>{{ p.quantity }}</td><td>R$ {{ '%.2f'|format(p.unit_price|float) }}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">Nenhum produto cadastrado.</p>{% endif %}</section>
+<section class="panel"><h2>Histórico de entradas recentes</h2>
+{% if entry_rows %}<div class="table-wrap"><table><thead><tr><th>Data e horário</th><th>Produto</th><th>Quantidade adicionada</th><th>Responsável</th><th>Situação</th><th></th></tr></thead><tbody>
+{% for row in entry_rows %}{% set e = row.record %}<tr><td>{{ e.created_at|localtime('%d/%m/%Y %H:%M:%S') }}</td><td>{{ e.product.name }}</td><td>+{{ e.quantity }}</td><td>{{ e.user.username }}</td><td><span class="stock-status {{ row.classe }}">{{ row.status }}</span>{% if row.note %}<br><span class="muted" style="white-space:normal;display:inline-block;max-width:260px;font-size:12px">{{ row.note }}</span>{% endif %}</td><td>{% if row.can_correct %}<a class="button button-secondary" href="{{ url_for('estoque.correct_entry_view', entry_id=e.id) }}">Corrigir ({{ row.minutes_left }} min)</a>{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="muted">Ainda não há entradas registradas.</p>{% endif %}</section>
+{% endblock %}

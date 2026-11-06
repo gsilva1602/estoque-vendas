@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }} · Estoque & Vendas{% endblock %}
+{% block content %}
+<style>
+  .form-stack textarea{width:100%;border:1px solid #cfd7e2;border-radius:8px;padding:11px 12px;font:inherit;background:#fff;color:#182230;resize:vertical;min-height:96px}
+  .form-stack textarea:focus{outline:2px solid #b8d4ff;border-color:#4b8ee8}
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+  .summary span{display:block;color:#697586;font-size:12px;margin-bottom:4px}
+  .summary strong{font-size:16px}
+  .hint{font-weight:400;color:#697586;font-size:12px}
+  .actions{display:flex;gap:10px;align-items:center}
+</style>
+<div class="page-heading"><div>
+  <h1>{{ titulo }}</h1>
+  <p class="muted">O lançamento original não é apagado: ele fica registrado como anulado, junto com a sua justificativa.</p>
+</div></div>
+<section class="panel">
+  <h2>Lançamento original</h2>
+  <div class="summary">
+    <div><span>Produto</span><strong>{{ produto }}</strong></div>
+    <div><span>Quantidade atual</span><strong>{{ record.quantity }}</strong></div>
+    {% if tipo == 'venda' %}<div><span>Valor unitário (mantido)</span><strong>R$ {{ '%.2f'|format(record.unit_price|float) }}</strong></div>{% endif %}
+    <div><span>Prazo restante</span><strong>cerca de {{ minutos }} min</strong></div>
+  </div>
+  <form method="post" action="{{ post_url }}" class="form-stack">
+    <label>{{ quantidade_label }}
+      <input name="quantity" type="number" min="0" step="1" required value="{{ values.quantity }}">
+      <span class="hint">Use 0 para cancelar o lançamento por completo.</span>
+    </label>
+    <label>Justificativa (obrigatória)
+      <textarea name="justification" minlength="10" maxlength="500" required placeholder="Explique o que aconteceu, por exemplo: digitei 100 em vez de 10.">{{ values.justification }}</textarea>
+      <span class="hint">Mínimo de 10 caracteres. Fica visível para o administrador.</span>
+    </label>
+    <div class="actions">
+      <button class="button" type="submit">Confirmar correção</button>
+      <a class="button button-secondary" href="{{ voltar_url }}">Voltar</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
