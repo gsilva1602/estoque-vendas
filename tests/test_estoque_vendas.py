@@ -21,6 +21,33 @@ def test_cadastrar_produto_invalido_mostra_erro(est, html, consulta):
     assert consulta(lambda: db.session.scalar(select(func.count(Product.id)))) == 0
 
 
+def test_categoria_existente_e_sugerida_no_cadastro(est, novo_produto, html):
+    novo_produto(nome="Produto existente", preco="1", estoque=0)
+
+    conteudo = html(est.get("/estoque"))
+
+    assert 'list="product-categories"' in conteudo
+    assert '<option value="Cupcake">' in conteudo
+
+
+def test_cadastrar_produto_aceita_categoria_nova(est, consulta):
+    resposta = est.post(
+        "/estoque",
+        data={
+            "name": "Novo produto",
+            "category": "Categoria personalizada",
+            "unit_price": "2.50",
+        },
+    )
+
+    assert resposta.status_code == 302
+    assert consulta(
+        lambda: db.session.scalar(
+            select(Product.category).where(Product.name == "Novo produto")
+        )
+    ) == "Categoria personalizada"
+
+
 # ---------------------------------------------------------------- entradas
 
 def test_entrada_soma_ao_saldo_e_grava_movimento(est, novo_produto, html, consulta):

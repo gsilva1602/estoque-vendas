@@ -42,9 +42,17 @@ def index():
             flash("Não foi possível cadastrar o produto.", "error")
         return redirect(url_for("estoque.index"))
     products = db.session.scalars(select(Product).order_by(Product.name)).all()
+    categories = db.session.scalars(
+        select(Product.category).distinct().order_by(Product.category)
+    ).all()
     entries = db.session.scalars(select(StockEntry).order_by(StockEntry.created_at.desc()).limit(20)).all()
     entry_rows = annotate("entrada", entries, current_user)
-    return render_template("estoque.html", products=products, entry_rows=entry_rows)
+    return render_template(
+        "estoque.html",
+        products=products,
+        categories=categories,
+        entry_rows=entry_rows,
+    )
 
 
 @bp.route("/estoque/entrada", methods=["POST"])

@@ -34,7 +34,7 @@ Revise o perfil antes de criar a conta e compartilhe os dados de acesso com a pe
 
 ### Cadastrar produtos
 
-Em **Estoque**, use **Cadastrar produto** para informar nome, categoria e preço unitário de venda. O cadastro começa com quantidade zero; cadastrar o produto não adiciona unidades ao estoque.
+Em **Estoque**, use **Cadastrar produto** para informar nome, categoria e preço unitário de venda. A categoria sugere valores já utilizados, mas também permite digitar uma nova. O cadastro começa com quantidade zero; cadastrar o produto não adiciona unidades ao estoque.
 
 ### Registrar uma entrada
 

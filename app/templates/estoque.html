@@ -6,7 +6,8 @@
 <section class="panel"><h2>Cadastrar produto</h2>
 <form method="post" class="form-stack">
 <label>Nome do produto<input name="name" maxlength="120" required></label>
-<label>Categoria<input name="category" maxlength="80" required></label>
+<label>Categoria<input name="category" list="product-categories" maxlength="80" autocomplete="off" required></label>
+<datalist id="product-categories">{% for category in categories %}<option value="{{ category }}">{% endfor %}</datalist>
 <label>Preço unitário de venda (R$)<input name="unit_price" type="number" min="0" step="0.01" value="0.00" required></label>
 <button class="button" type="submit">Cadastrar produto</button>
 </form></section>
